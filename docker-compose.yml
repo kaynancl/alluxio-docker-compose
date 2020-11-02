@@ -1,0 +1,46 @@
+version: '3.7'
+
+services:
+  alluxio-master:
+    image: alluxio/alluxio
+    container_name: alluxio-master
+    restart: always
+    ports:
+      - "19999:19999"
+      - "19998:19998"
+    command: master
+    environment:
+      ALLUXIO_JAVA_OPTS: "-Dalluxio.master.hostname=alluxio-master -Dalluxio.master.mount.table.root.ufs=/opt/alluxio/underFSStorage -Dalluxio.master.mount.table.root.shared=true -Dalluxio.underfs.s3.owner.id.to.username.mapping=${AWS_CANONICAL_ID}=${CLIENT_USER} -Dalluxio.security.authorization.permission.enabled=false"
+      CLIENT_USER: ${CLIENT_USER}
+      AWS_CANONICAL_ID: ${AWS_CANONICAL_ID}
+      AWS_PROFILE: mfa
+      AWS_SHARED_CREDENTIALS_FILE: "/home/alluxio/.aws/credentials"
+      AWS_DEFAULT_REGION: us-east-1
+    volumes:
+      - ufs:/opt/alluxio/underFSStorage
+      - ~/.aws:/home/alluxio/.aws
+
+  alluxio-worker:
+    image: alluxio/alluxio
+    container_name: alluxio-worker
+    restart: always
+    depends_on:
+      - alluxio-master
+    shm_size: 2GB
+    environment:
+      ALLUXIO_JAVA_OPTS: "-Dalluxio.worker.ramdisk.size=2GB -Dalluxio.master.hostname=alluxio-master -Dalluxio.worker.hostname=${EXTERNAL_IP} -Dalluxio.underfs.s3.owner.id.to.username.mapping=${AWS_CANONICAL_ID}=${CLIENT_USER} -Dalluxio.security.authorization.permission.enabled=false"
+      CLIENT_USER: ${CLIENT_USER}
+      AWS_CANONICAL_ID: ${AWS_CANONICAL_ID}
+      AWS_PROFILE: ${AWS_PROFILE}
+      AWS_SHARED_CREDENTIALS_FILE: "/home/alluxio/.aws/credentials"
+      AWS_DEFAULT_REGION: us-east-1
+    ports:
+      - "29999:29999"
+      - "30000:30000"
+    command: worker
+    volumes:
+      - ufs:/opt/alluxio/underFSStorage
+      - ~/.aws:/home/alluxio/.aws
+
+volumes:
+  ufs:
