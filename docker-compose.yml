@@ -13,7 +13,7 @@ services:
       ALLUXIO_JAVA_OPTS: "-Dalluxio.master.hostname=alluxio-master -Dalluxio.master.mount.table.root.ufs=/opt/alluxio/underFSStorage -Dalluxio.master.mount.table.root.shared=true -Dalluxio.underfs.s3.owner.id.to.username.mapping=${AWS_CANONICAL_ID}=${CLIENT_USER} -Dalluxio.security.authorization.permission.enabled=false"
       CLIENT_USER: ${CLIENT_USER}
       AWS_CANONICAL_ID: ${AWS_CANONICAL_ID}
-      AWS_PROFILE: mfa
+      AWS_PROFILE: ${AWS_PROFILE}
       AWS_SHARED_CREDENTIALS_FILE: "/home/alluxio/.aws/credentials"
       AWS_DEFAULT_REGION: us-east-1
     volumes:

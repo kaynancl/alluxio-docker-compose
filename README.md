@@ -4,7 +4,9 @@ This repository aims to provide a Alluxio Cluster for tests by docker-compose. T
 
 ## Prerequisites
 
-Must have an aws credentials file configured in the user's path. (e.g: /home/${USER)/.aws/credentials)
+- Must have an aws credentials file configured in the user's path. (e.g: /home/${USER)/.aws/credentials)
+- Export the profile configured in your aws credentials file using AWS_PROFILE enviroment, e.g: `export AWS_PROFILE=anyprofile`
+
 
 ## Usage
 
